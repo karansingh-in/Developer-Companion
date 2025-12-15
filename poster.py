@@ -1,29 +1,41 @@
-import tweepy
-import os, dotenv
-
-dotenv.load_dotenv()
-consumer_key = os.getenv('X_API_KEY')
-consumer_secret = os.getenv('X_API_SECRET')
-access_token = os.getenv('X_ACCESS_TOKEN')
-access_token_secret = os.getenv('X_ACCESS_SECRET')
+import tweepy, random, schedule, time
+from data import advices, hashtags
+from auth import(
+    consumer_key, consumer_secret, access_token, access_token_secret, bearer_token
+)
 
 client = tweepy.Client(
     consumer_key=consumer_key, consumer_secret=consumer_secret,
     access_token=access_token, access_token_secret=access_token_secret
 )
 
-# Create Tweet
+# POSTING SOMETHING ----
+# client.create_tweet(text='this is test 3')
 
-# The app and the corresponding credentials must have the Write permission
+# RETWEETING A POST ----
+# client.retweet(1982342611764453882)
 
-# Check the App permissions section of the Settings tab of your app, under the
-# Twitter Developer Portal Projects & Apps page at
-# https://developer.twitter.com/en/portal/projects-and-apps
+# REPLYING TO A POST ----
+# client.create_tweet(
+#     text="Nice post!",
+#     in_reply_to_tweet_id=1982342611764453882
+# )
 
-# Make sure to reauthorize your app / regenerate your access token and secret 
-# after setting the Write permission
+count = int(1)
+def job():
+    global count
+    try:
+        print('im here')
+        client.create_tweet(text=f'Post {count}\n' + random.choice(advices) + '\n\n' + random.choice(hashtags))
+        count += 1
+        print("posted something")
+    except Exception as e:
+        print("Error:", e)
 
-response = client.create_tweet(
-    text="This is a test tweet"
-)
-print(f"https://twitter.com/user/status/{response.data['id']}")
+
+schedule.every().day.at("00:16:00").do(job)
+# schedule.every(10).seconds.do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
