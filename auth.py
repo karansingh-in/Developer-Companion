@@ -1,7 +1,6 @@
 import tweepy
 import os
 import dotenv
-
 dotenv.load_dotenv()
 bearer_token = os.getenv('bearer_token')
 consumer_key = os.getenv('X_API_KEY')
